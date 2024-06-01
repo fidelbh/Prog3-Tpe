@@ -40,4 +40,15 @@ public class Tarea {
     public Boolean isCritica() {
         return critica;
     }
+
+    @Override
+    public String toString() {
+        return "Tarea{" +
+                "id='" + id + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", tiempo=" + tiempo +
+                ", prioridad=" + prioridad +
+                ", critica=" + critica +
+                '}';
+    }
 }

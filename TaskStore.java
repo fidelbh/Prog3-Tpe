@@ -37,6 +37,6 @@ public class TaskStore {
 
 
     public List<Tarea> getPriorityRange(int from, int to) {
-
+        return priorityBTree.getRange(Integer.valueOf(from), Integer.valueOf(to));
     }
 }

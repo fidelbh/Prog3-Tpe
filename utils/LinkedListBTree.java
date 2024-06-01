@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class LinkedListBTree<E> {
+    // Left < Node < Right
     private LinkedListTreeNode<E> root;
 
     public LinkedListBTree(){
@@ -49,9 +50,11 @@ public class LinkedListBTree<E> {
             return result;
         getRange(current.getLeft(), from, to, result);
         Integer currentKey = current.getKey();
-        if (currentKey>= from && currentKey < to)
-            result.addAll(current.getAll());
-        getRange(current.getRight(), from, to, result);
+        if (currentKey < to){
+            if (currentKey>= from)
+                result.addAll(current.getAll());
+            getRange(current.getRight(), from, to, result);
+        }
         return result;
     }
 
