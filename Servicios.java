@@ -1,6 +1,8 @@
 package tpe;
 
 import tpe.utils.CSVReader;
+import tpe.utils.CustomLinkedList;
+
 import java.util.List;
 
 /**
@@ -9,15 +11,16 @@ import java.util.List;
  * de implementación.
  */
 public class Servicios {
-	// TODO: declarar coleccion tareas, procesadores
+	private TaskStore taskStore;
+	private CustomLinkedList<Procesador> procesadoresLinkedList;
 	/*
      * Expresar la complejidad temporal del constructor.
      */
 	public Servicios(String pathProcesadores, String pathTareas)
 	{
 		CSVReader reader = new CSVReader();
-		reader.readProcessors(pathProcesadores);
-		reader.readTasks(pathTareas);
+		procesadoresLinkedList = reader.readProcessors(pathProcesadores);
+		taskStore = reader.readTasks(pathTareas);
 	}
 	
 	/*

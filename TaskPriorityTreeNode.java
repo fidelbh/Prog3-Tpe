@@ -1,16 +1,15 @@
 package tpe;
 
 import tpe.utils.CustomLinkedList;
-import tpe.utils.TreeNode;
 
-public class TareasTreeNode  {
+public class TaskPriorityTreeNode {
     private CustomLinkedList<Tarea> linkedList;
     private Tarea value;
     private Integer key;
-    private TareasTreeNode left;
-    private TareasTreeNode right;
+    private TaskPriorityTreeNode left;
+    private TaskPriorityTreeNode right;
 
-    public TareasTreeNode(Tarea tarea){
+    public TaskPriorityTreeNode(Tarea tarea){
         setLeft(null);
         setRight(null);
         setKey(tarea.getPrioridad());
@@ -25,19 +24,19 @@ public class TareasTreeNode  {
         this.key = key;
     }
 
-    public TareasTreeNode getLeft() {
+    public TaskPriorityTreeNode getLeft() {
         return left;
     }
 
-    public void setLeft(TareasTreeNode left) {
+    public void setLeft(TaskPriorityTreeNode left) {
         this.left = left;
     }
 
-    public TareasTreeNode getRight() {
+    public TaskPriorityTreeNode getRight() {
         return right;
     }
 
-    public void setRight(TareasTreeNode right) {
+    public void setRight(TaskPriorityTreeNode right) {
         this.right = right;
     }
 
@@ -52,6 +51,10 @@ public class TareasTreeNode  {
     }
 
     public void addValue(Tarea tarea){
-        this.linkedList.push(tarea);
+        if(this.getKey() == tarea.getPrioridad())
+            this.linkedList.push(tarea);
+        else
+            throw new IllegalArgumentException(String.format("Task key '%s' is no match for the list '%s'.",
+                    tarea.getPrioridad(), this.getKey()));
     }
 }
