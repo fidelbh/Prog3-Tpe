@@ -26,16 +26,22 @@ public class Servicios {
 	/*
      * Expresar la complejidad temporal del servicio 1.
      */
-	public Tarea servicio1(String ID) {	}
+	public Tarea servicio1(String ID) {
+		return taskStore.getById(ID);
+	}
     
     /*
      * Expresar la complejidad temporal del servicio 2.
      */
-	public List<Tarea> servicio2(boolean esCritica) {}
+	public List<Tarea> servicio2(boolean esCritica) {
+		return taskStore.getCriticals(esCritica);
+	}
 
     /*
      * Expresar la complejidad temporal del servicio 3.
      */
-	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {}
+	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
+		return taskStore.getPriorityRange(prioridadInferior, prioridadSuperior);
+	}
 
 }

@@ -1,14 +1,17 @@
 package tpe;
 
+import jdk.jshell.spi.ExecutionControl;
 import tpe.utils.CustomLinkedList;
 import tpe.utils.LinkedListBTree;
 
 import java.util.Hashtable;
+import java.util.List;
 
 public class TaskStore {
     private CustomLinkedList<Tarea> linkedList; // Estructura primaria
     private LinkedListBTree<Tarea> priorityBTree;
-    private Hashtable idHash;
+    private Hashtable<String, Tarea> idHash;
+
 
     public TaskStore(){
         linkedList = new CustomLinkedList<>();
@@ -23,4 +26,17 @@ public class TaskStore {
         idHash.put(tarea.getId(), tarea);
     }
 
+    public Tarea getById(String id){
+        Tarea tarea = idHash.get(id);
+        return new Tarea(tarea);
+    }
+
+    public List<Tarea> getCriticals(boolean esCritica) {
+        return null;
+    }
+
+
+    public List<Tarea> getPriorityRange(int from, int to) {
+
+    }
 }

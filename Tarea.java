@@ -14,6 +14,13 @@ public class Tarea {
         this.critica = critica;
     }
 
+    public Tarea(Tarea tarea){
+        this.id = tarea.getId();
+        this.nombre = tarea.getNombre();
+        this.tiempo = tarea.getTiempo();
+        this.prioridad = tarea.getPrioridad();
+        this.critica = tarea.isCritica();
+    }
     public String getId() {
         return id;
     }

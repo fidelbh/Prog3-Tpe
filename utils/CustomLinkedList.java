@@ -1,9 +1,7 @@
 package tpe.utils;
 
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class CustomLinkedList<E> implements Iterable<Node<E>> {
     private Node<E> first;
@@ -221,6 +219,14 @@ public class CustomLinkedList<E> implements Iterable<Node<E>> {
     @Override
     public Iterator<Node<E>> iterator() {
         return new CustomLinkedListIterator();
+    }
+
+    public List<E> getAll() {
+        List<E> result = new ArrayList<>();
+        for (Node<E> node : this){
+            result.add(node.getData());
+        }
+        return result;
     }
 
     private class CustomLinkedListIterator implements Iterator<Node<E>> {

@@ -1,7 +1,9 @@
 package tpe.utils;
 
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class LinkedListBTree<E> {
     private LinkedListTreeNode<E> root;
@@ -36,4 +38,21 @@ public class LinkedListBTree<E> {
             current.push(value);
         }
     }
+
+    public List<E> getRange(Integer from, Integer to){
+        List<E> result = new ArrayList();
+        return getRange(this.root, from, to, result);
+    }
+
+    protected List<E> getRange(LinkedListTreeNode<E> current, Integer from, Integer to, List<E> result){
+        if (current == null)
+            return result;
+        getRange(current.getLeft(), from, to, result);
+        Integer currentKey = current.getKey();
+        if (currentKey>= from && currentKey < to)
+            result.addAll(current.getAll());
+        getRange(current.getRight(), from, to, result);
+        return result;
+    }
+
 }

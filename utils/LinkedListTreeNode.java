@@ -1,6 +1,8 @@
 package tpe.utils;
 
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 public class LinkedListTreeNode<E> {
@@ -43,5 +45,9 @@ public class LinkedListTreeNode<E> {
 
     public Integer getKey(){
         return  key;
+    }
+
+    public List<E> getAll() {
+        return linkedList.getAll();
     }
 }
