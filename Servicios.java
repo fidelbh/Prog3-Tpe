@@ -44,4 +44,8 @@ public class Servicios {
 		return taskStore.getPriorityRange(prioridadInferior, prioridadSuperior);
 	}
 
+	public Solucion backtracking(int tiempoMaxEjecucionNoRefrigerados){
+
+	}
+
 }
