@@ -46,43 +46,38 @@ public class BacktrackingTaskProcessor {
                                        Node<Tarea> currentTask,
                                        Node<Procesador> firstProcessor,
                                        int[][] processorsTracker){
-        /*
-        if (solution)
-             return
-        else
-            while
-                agregarSiguiente
-                if (podar)
-                    backtracking(++)
-                quitarSiguiente
-
-        return
-        */
-        if (solution.size() == tasks.getLength() || Objects.isNull(currentTask)) // solo llega con init y despues de validar la solution
+        if (solution.size() == tasks.getLength() || Objects.isNull(currentTask))
+            // solo llega con init y despues de validar la solution
             return solution; // first found
         else{
             Integer processorPos = 0;
             Node<Procesador> currentProcessor = firstProcessor;
             while(solution.size() < tasks.getLength() && processorPos < processors.getLength()){
-                // while Objects.nonNull(currentTask)
-                // currentTask = currentTask.getNext(); posibles variaciones del while
-                solution.add(processorPos); // asignamos el procesador 0 a la pos de la tarea[pos]
-                int newExecutionTime = processorsTracker[processorPos][1] + currentTask.getData().getTiempo(); // revisar
+
+                solution.add(processorPos); // asignamos el procesador 0 al index de la tarea[pos]
+
                 boolean taskIsCritical = currentTask.getData().isCritica();
                 boolean processorIsRefrigerated = currentProcessor.getData().isRefrigerado();
+                int taskTime = currentTask.getData().getTiempo();
 
-                if (validateSolution(solution, currentTask, currentProcessor, processorsTracker)) {
+                if (validateSolution(processorsTracker, processorPos, taskIsCritical,
+                        taskTime, processorIsRefrigerated)) {
+                    System.out.println(String.format("Valide el procesador %s para la task %s",
+                            currentProcessor.getData().getId(), currentTask.getData().getId()));
                     System.out.println(String.format("Estado: %s", solution));
+
+                    this.updateEvent(processorsTracker, processorPos, taskIsCritical, taskTime);
+
                     backtracking(tasks, processors, solution, currentTask.getNext(), firstProcessor, processorsTracker);
 
                     if (solution.size() == tasks.getLength())
                         return solution; // corta para evitar los remove
 
-                    processorsTracker[processorPos][1] -= currentTask.getData().getTiempo();
-                    if (taskIsCritical)
-                        processorsTracker[processorPos][0]--;
+                    this.undoEvent(processorsTracker, processorPos, taskIsCritical, taskTime);
                 }
-                solution.remove(solution.size()-1);
+
+                solution.remove(solution.size()-1); // self-cleanup
+
                 processorPos++;
                 currentProcessor = currentProcessor.getNext();
             }
@@ -90,25 +85,33 @@ public class BacktrackingTaskProcessor {
         return solution; // first found or empty
     }
 
-    private boolean validateSolution(ArrayList<Integer> solution,
-                                     Node<Tarea> currentTask,
-                                     Node<Procesador> currentProcessor,
-                                     int[][] processorsTracker){
-        Integer processorPos = solution.get(solution.size()-1); // podriamos pasar directamente el processor pos como argumento
-        int newExecutionTime = processorsTracker[processorPos][1] + currentTask.getData().getTiempo(); // revisar
-        boolean taskIsCritical = currentTask.getData().isCritica();
-        boolean processorIsRefrigerated = currentProcessor.getData().isRefrigerado();
-        System.out.println(String.format("processorTracker: %s %s", processorsTracker[processorPos][0], processorsTracker[processorPos][1]));
+    private boolean validateSolution(int[][] processorsTracker,
+                                     Integer processorPos,
+                                     boolean taskIsCritical,
+                                     int taskTime,
+                                     boolean processorIsRefrigerated){
+        int newExecutionTime = processorsTracker[processorPos][1] + taskTime;
+        System.out.println(String.format("processorTracker: %s %s",
+                processorsTracker[processorPos][0], processorsTracker[processorPos][1]));
         if (
                 (!taskIsCritical || processorsTracker[processorPos][0] < this.maxAdmittedCriticalTasks)
                 && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados) ){
-            if (taskIsCritical)
-                processorsTracker[processorPos][0]++;
-            processorsTracker[processorPos][1] = newExecutionTime;
-            System.out.println(String.format("Valide el procesador %s para la task %s", currentProcessor.getData().getId(), currentTask.getData().getId()));
             return true;
         }
         return false;
+    }
+
+    private void updateEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical,int taskTime){
+        processorsTracker[processorPos][1] += taskTime;
+        if (taskIsCritical)
+            processorsTracker[processorPos][0]++;
+    }
+
+    private void undoEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical, int taskTime){
+        processorsTracker[processorPos][1] -= taskTime;
+        if (taskIsCritical)
+            processorsTracker[processorPos][0]--;
+
     }
 
     private void solutionOutput(List<Integer> solution){
