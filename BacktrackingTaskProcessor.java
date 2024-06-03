@@ -15,33 +15,41 @@ public class BacktrackingTaskProcessor {
         this.maxAdmittedCriticalTasks = 2;
     }
 
-    public void findSolution(){
-        //Si la configuración de entrada de tareas y procesadores no permite que todas las tareas se ejecuten
-        // entonces no hay solución posible, y eso es lo que debería indicar el algoritmo en cuestión.
-        System.out.println(String.format("Solucion obtenida: %s"));
-        System.out.println(String.format("Tiempo maximo de ejecucion: %s"));
-        System.out.println(String.format("Costo de la solucion: %s"));
-    }
-
-    private int maxExeTime(){ return 0; }
-
     public List<Integer> backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
         ArrayList<Integer> solucion = new ArrayList<>();
         this.eventsCounter = 0;
 
         int[][] processorsTracker = new int[processors.getLength()][2];
-        // salio la direccion de memoria
         // [i][j]
         // pos-j 0 trackea # criticos, pos-j 1 trackea tiempo de ejecucion
         // pos-i trackea el procesador
         List<Integer> res = backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
+
+        if (solucion.isEmpty()){
+            System.out.println("No solution could be found");
+            return null;
+        }
+
+        String solutionString = processSolutionOutput(res, tasks, processors);
+        int maxExecutionTime = findMaxExecutionTime(processorsTracker);
+
+        System.out.println(String.format("Solucion obtenida: %s", solutionString));
+        System.out.println(String.format("Tiempo maximo de ejecucion: %s", maxExecutionTime));
         System.out.println(String.format("Costo de la solucion: %s", this.eventsCounter));
-        
+
+        return res;
+    }
+
+    private int findMaxExecutionTime(int[][] processorsTracker) {
+        int res = -1;
+        for (int i = 0; i < processorsTracker.length; i++) {
+            if (processorsTracker[i][1] > res)
+                res = processorsTracker[i][1];
+        }
         return res;
     }
 
     // Procesador : P1-T2, P2-T4
-    // Oka, pero primero me centraria en ver q funcione. Despues el toString
 
     private List<Integer> backtracking(CustomLinkedList<Tarea> tasks,
                                        CustomLinkedList<Procesador> processors,
@@ -117,13 +125,29 @@ public class BacktrackingTaskProcessor {
             processorsTracker[processorPos][0]--;
     }
 
-    private void solutionOutput(List<Integer> solution){
-        // nada, lo deje de lado
-        // processorMatrix
-        for (int taskPos = 0; taskPos < solution.size(); taskPos++) {
-            Integer processorPos = solution.get(taskPos);
-            // processorMatrix.get(processorPos).add(taskPos)
+    private String processSolutionOutput(List<Integer> solution,
+                                       CustomLinkedList<Tarea> tasks,
+                                       CustomLinkedList<Procesador> processors){
+        String[] processorOut = new String[processors.getLength()];
+        int pos = 0; // parallel index
+
+        for (Node<Procesador> processor : processors){
+            processorOut[pos] = processor.getData().getId() + ": ";
+            pos++;
         }
+
+        pos = 0; // reset index
+        for (Node<Tarea> task : tasks){
+            processorOut[solution.get(pos)] += task.getData().getId() + "-";
+            pos++;
+        }
+
+        String res = "";
+        for (String pOut : processorOut){
+            res += pOut.substring(0, (pOut.length()-1)) + " | ";
+        }
+
+        return res.substring(0, res.length()-3);
     }
 
 }
