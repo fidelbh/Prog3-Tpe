@@ -5,10 +5,11 @@ import tpe.utils.Node;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class BacktrackingTaskProcessor {
     private int tiempoMaxEjecucionNoRefrigerados, maxAdmittedCriticalTasks, eventsCounter;
+    private int bestExecutionTime;
+    private ArrayList<Integer> bestSolution;
 
     public BacktrackingTaskProcessor(int tiempoMaxEjecucionNoRefrigerados){
         this.tiempoMaxEjecucionNoRefrigerados = tiempoMaxEjecucionNoRefrigerados;
@@ -18,26 +19,27 @@ public class BacktrackingTaskProcessor {
     public List<Integer> backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
         ArrayList<Integer> solucion = new ArrayList<>();
         this.eventsCounter = 0;
+        this.bestSolution = new ArrayList<>();
+        this.bestExecutionTime = Integer.MAX_VALUE;
 
         int[][] processorsTracker = new int[processors.getLength()][2];
         // [i][j]
         // pos-j 0 trackea # criticos, pos-j 1 trackea tiempo de ejecucion
         // pos-i trackea el procesador
-        List<Integer> res = backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
+        backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
 
-        if (solucion.isEmpty()){
+        if (bestSolution.isEmpty()){
             System.out.println("No solution could be found");
             return null;
         }
 
-        String solutionString = processSolutionOutput(res, tasks, processors);
-        int maxExecutionTime = findMaxExecutionTime(processorsTracker);
+        String solutionString = processSolutionOutput(bestSolution, tasks, processors);
 
         System.out.println(String.format("Solucion obtenida: %s", solutionString));
-        System.out.println(String.format("Tiempo maximo de ejecucion: %s", maxExecutionTime));
+        System.out.println(String.format("Tiempo maximo de ejecucion: %s", bestExecutionTime));
         System.out.println(String.format("Costo de la solucion: %s", this.eventsCounter));
 
-        return res;
+        return bestSolution;
     }
 
     private int findMaxExecutionTime(int[][] processorsTracker) {
@@ -57,10 +59,10 @@ public class BacktrackingTaskProcessor {
                                        Node<Tarea> currentTask,
                                        Node<Procesador> firstProcessor,
                                        int[][] processorsTracker){
-        if (solution.size() == tasks.getLength() || Objects.isNull(currentTask))
-            // solo llega con init y despues de validar la solution
-            return solution; // first found
-        else{
+        if (solution.size() == tasks.getLength() && isBetterSolution(processorsTracker)){
+            this.bestExecutionTime = findMaxExecutionTime(processorsTracker);
+            this.bestSolution = new ArrayList<>(solution);
+        } else {
             Integer processorPos = 0;
             Node<Procesador> currentProcessor = firstProcessor;
             while(solution.size() < tasks.getLength() && processorPos < processors.getLength()){
@@ -74,16 +76,13 @@ public class BacktrackingTaskProcessor {
 
                 if (validateSolution(processorsTracker, processorPos, taskIsCritical,
                         taskTime, processorIsRefrigerated)) {
-                    System.out.println(String.format("Valide el procesador %s para la task %s",
-                            currentProcessor.getData().getId(), currentTask.getData().getId()));
-                    System.out.println(String.format("Estado: %s", solution));
+//                    System.out.println(String.format("Valide el procesador %s para la task %s",
+//                            currentProcessor.getData().getId(), currentTask.getData().getId()));
+//                    System.out.println(String.format("Estado: %s", solution));
 
                     this.updateEvent(processorsTracker, processorPos, taskIsCritical, taskTime);
 
                     backtracking(tasks, processors, solution, currentTask.getNext(), firstProcessor, processorsTracker);
-
-                    if (solution.size() == tasks.getLength())
-                        return solution; // corta para evitar los remove
 
                     this.undoEvent(processorsTracker, processorPos, taskIsCritical, taskTime);
                 }
@@ -97,14 +96,19 @@ public class BacktrackingTaskProcessor {
         return solution; // first found or empty
     }
 
+    private boolean isBetterSolution(int[][] processorsTracker) {
+        int currentExecutionTime = findMaxExecutionTime(processorsTracker);
+        return currentExecutionTime < this.bestExecutionTime;
+    }
+
     private boolean validateSolution(int[][] processorsTracker,
                                      Integer processorPos,
                                      boolean taskIsCritical,
                                      int taskTime,
                                      boolean processorIsRefrigerated){
         int newExecutionTime = processorsTracker[processorPos][1] + taskTime;
-        System.out.println(String.format("processorTracker: %s %s",
-                processorsTracker[processorPos][0], processorsTracker[processorPos][1]));
+//        System.out.println(String.format("processorTracker: %s %s",
+//                processorsTracker[processorPos][0], processorsTracker[processorPos][1]));
         if (
                 (!taskIsCritical || processorsTracker[processorPos][0] < this.maxAdmittedCriticalTasks)
                 && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados) ){
