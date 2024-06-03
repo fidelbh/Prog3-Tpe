@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class BacktrackingTaskProcessor {
-    private int tiempoMaxEjecucionNoRefrigerados, maxAdmittedCriticalTasks;
+    private int tiempoMaxEjecucionNoRefrigerados, maxAdmittedCriticalTasks, eventsCounter;
 
     public BacktrackingTaskProcessor(int tiempoMaxEjecucionNoRefrigerados){
         this.tiempoMaxEjecucionNoRefrigerados = tiempoMaxEjecucionNoRefrigerados;
@@ -27,14 +27,17 @@ public class BacktrackingTaskProcessor {
 
     public List<Integer> backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
         ArrayList<Integer> solucion = new ArrayList<>();
-        System.out.println(solucion);
+        this.eventsCounter = 0;
 
         int[][] processorsTracker = new int[processors.getLength()][2];
         // salio la direccion de memoria
         // [i][j]
         // pos-j 0 trackea # criticos, pos-j 1 trackea tiempo de ejecucion
         // pos-i trackea el procesador
-        return backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
+        List<Integer> res = backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
+        System.out.println(String.format("Costo de la solucion: %s", this.eventsCounter));
+        
+        return res;
     }
 
     // Procesador : P1-T2, P2-T4
@@ -55,6 +58,7 @@ public class BacktrackingTaskProcessor {
             while(solution.size() < tasks.getLength() && processorPos < processors.getLength()){
 
                 solution.add(processorPos); // asignamos el procesador 0 al index de la tarea[pos]
+                this.eventsCounter++;
 
                 boolean taskIsCritical = currentTask.getData().isCritica();
                 boolean processorIsRefrigerated = currentProcessor.getData().isRefrigerado();
@@ -111,7 +115,6 @@ public class BacktrackingTaskProcessor {
         processorsTracker[processorPos][1] -= taskTime;
         if (taskIsCritical)
             processorsTracker[processorPos][0]--;
-
     }
 
     private void solutionOutput(List<Integer> solution){
