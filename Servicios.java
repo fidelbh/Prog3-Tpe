@@ -44,8 +44,12 @@ public class Servicios {
 		return taskStore.getPriorityRange(prioridadInferior, prioridadSuperior);
 	}
 
-	public Solucion backtracking(int tiempoMaxEjecucionNoRefrigerados){
-
+	public void backtracking(int tiempoMaxEjecucionNoRefrigerados){
+		// El output en el TPE dice <Solucion> pero no se a q se refieren
+		BacktrackingTaskProcessor backtrackingTaskProcessor = new BacktrackingTaskProcessor(tiempoMaxEjecucionNoRefrigerados);
+		System.out.println(backtrackingTaskProcessor.backtracking(taskStore.getAll(), procesadoresLinkedList));
+		// Ahi nos deberia imprimir un indexArray de la solucion
+		// Puede ser q lo tomo todo el procesador 0 o q algo no anduvo xD
 	}
 
 }

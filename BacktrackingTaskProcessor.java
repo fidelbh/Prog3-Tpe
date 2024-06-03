@@ -25,17 +25,26 @@ public class BacktrackingTaskProcessor {
 
     private int maxExeTime(){ return 0; }
 
-    private List<Integer> backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
+    public List<Integer> backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
         ArrayList<Integer> solucion = new ArrayList<>();
+        System.out.println(solucion);
+
         int[][] processorsTracker = new int[processors.getLength()][2];
+        // salio la direccion de memoria
+        // [i][j]
+        // pos-j 0 trackea # criticos, pos-j 1 trackea tiempo de ejecucion
+        // pos-i trackea el procesador
         return backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
     }
+
+    // Procesador : P1-T2, P2-T4
+    // Oka, pero primero me centraria en ver q funcione. Despues el toString
 
     private List<Integer> backtracking(CustomLinkedList<Tarea> tasks,
                                        CustomLinkedList<Procesador> processors,
                                        ArrayList<Integer> solution,
                                        Node<Tarea> currentTask,
-                                       Node<Procesador> currentProcessor,
+                                       Node<Procesador> firstProcessor,
                                        int[][] processorsTracker){
         /*
         if (solution)
@@ -49,23 +58,33 @@ public class BacktrackingTaskProcessor {
 
         return
         */
-
         if (solution.size() == tasks.getLength() || Objects.isNull(currentTask)) // solo llega con init y despues de validar la solution
             return solution; // first found
         else{
             Integer processorPos = 0;
+            Node<Procesador> currentProcessor = firstProcessor;
             while(solution.size() < tasks.getLength() && processorPos < processors.getLength()){
                 // while Objects.nonNull(currentTask)
-                // currentTask = currentTask.getNext();
+                // currentTask = currentTask.getNext(); posibles variaciones del while
                 solution.add(processorPos); // asignamos el procesador 0 a la pos de la tarea[pos]
-                if (validateSolution(solution, currentTask, currentProcessor,processorsTracker)) {
-                    backtracking(tasks, processors, solution, currentTask.getNext(), currentProcessor.getNext(), processorsTracker);
-                    //backtracking(tasks, processors, solution, currentTask);
+                int newExecutionTime = processorsTracker[processorPos][1] + currentTask.getData().getTiempo(); // revisar
+                boolean taskIsCritical = currentTask.getData().isCritica();
+                boolean processorIsRefrigerated = currentProcessor.getData().isRefrigerado();
+
+                if (validateSolution(solution, currentTask, currentProcessor, processorsTracker)) {
+                    System.out.println(String.format("Estado: %s", solution));
+                    backtracking(tasks, processors, solution, currentTask.getNext(), firstProcessor, processorsTracker);
+
                     if (solution.size() == tasks.getLength())
-                        return solution;
+                        return solution; // corta para evitar los remove
+
+                    processorsTracker[processorPos][1] -= currentTask.getData().getTiempo();
+                    if (taskIsCritical)
+                        processorsTracker[processorPos][0]--;
                 }
                 solution.remove(solution.size()-1);
                 processorPos++;
+                currentProcessor = currentProcessor.getNext();
             }
         }
         return solution; // first found or empty
@@ -75,25 +94,25 @@ public class BacktrackingTaskProcessor {
                                      Node<Tarea> currentTask,
                                      Node<Procesador> currentProcessor,
                                      int[][] processorsTracker){
-        Integer processorPos = solution.get(solution.size()-1);
-        int newExecutionTime = processorsTracker[processorPos][1] + currentTask.getData().getTiempo();
+        Integer processorPos = solution.get(solution.size()-1); // podriamos pasar directamente el processor pos como argumento
+        int newExecutionTime = processorsTracker[processorPos][1] + currentTask.getData().getTiempo(); // revisar
         boolean taskIsCritical = currentTask.getData().isCritica();
         boolean processorIsRefrigerated = currentProcessor.getData().isRefrigerado();
-
-        if ((
-                (taskIsCritical && processorsTracker[processorPos][0] < this.maxAdmittedCriticalTasks) ||
-                (!taskIsCritical && processorsTracker[processorPos][0] <= this.maxAdmittedCriticalTasks))
-                && ((processorIsRefrigerated && newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados) ||
-                !processorIsRefrigerated)){
+        System.out.println(String.format("processorTracker: %s %s", processorsTracker[processorPos][0], processorsTracker[processorPos][1]));
+        if (
+                (!taskIsCritical || processorsTracker[processorPos][0] < this.maxAdmittedCriticalTasks)
+                && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados) ){
             if (taskIsCritical)
                 processorsTracker[processorPos][0]++;
             processorsTracker[processorPos][1] = newExecutionTime;
+            System.out.println(String.format("Valide el procesador %s para la task %s", currentProcessor.getData().getId(), currentTask.getData().getId()));
             return true;
         }
         return false;
     }
 
     private void solutionOutput(List<Integer> solution){
+        // nada, lo deje de lado
         // processorMatrix
         for (int taskPos = 0; taskPos < solution.size(); taskPos++) {
             Integer processorPos = solution.get(taskPos);

@@ -39,4 +39,8 @@ public class TaskStore {
     public List<Tarea> getPriorityRange(int from, int to) {
         return priorityBTree.getRange(Integer.valueOf(from), Integer.valueOf(to));
     }
+
+    public CustomLinkedList<Tarea> getAll(){
+        return linkedList; // TODO: devolver una copia
+    }
 }
