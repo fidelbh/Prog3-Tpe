@@ -7,6 +7,7 @@ public class Main {
 		Servicios servicios = new Servicios("./datasets/Procesadores.csv",
 				"./datasets/Tareas.csv");
 		System.out.println(servicios.servicio1("T2"));
+		System.out.println(servicios.servicio2(true));
 
 		System.out.println(servicios.servicio3(32,92));
 		servicios.backtracking(63);

@@ -42,6 +42,7 @@ public class GreedyTaskProcessor {
             // End
             posT++;
         }
+        return null;
     }
 
     private boolean validateSolution(int[][] processorsTracker,

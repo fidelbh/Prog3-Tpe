@@ -3,8 +3,11 @@ package tpe;
 import jdk.jshell.spi.ExecutionControl;
 import tpe.utils.CustomLinkedList;
 import tpe.utils.LinkedListBTree;
+import tpe.utils.Node;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 public class TaskStore {
@@ -32,7 +35,14 @@ public class TaskStore {
     }
 
     public List<Tarea> getCriticals(boolean esCritica) {
-        return null;
+        List<Tarea> result = new ArrayList<>();
+        Iterator<Node<Tarea>> it = linkedList.iterator();
+        while(it.hasNext()){
+            Tarea t = it.next().getData();
+            if(t.isCritica() == esCritica)
+                result.add(t);
+        }
+        return result;
     }
 
 
