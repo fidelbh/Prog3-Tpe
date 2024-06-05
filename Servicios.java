@@ -15,6 +15,7 @@ public class Servicios {
 	private CustomLinkedList<Procesador> procesadoresLinkedList;
 	/*
      * Expresar la complejidad temporal del constructor.
+     * O(2n) 2 for, while en ReadContent
      */
 	public Servicios(String pathProcesadores, String pathTareas)
 	{
@@ -24,34 +25,36 @@ public class Servicios {
 	}
 	
 	/*
-     * Expresar la complejidad temporal del servicio 1.
+     * Expresar la complejidad temporal del servicio 1:
+     * La complejidad temporal del servicio 1 es O(1), ya que al usar una estructura de tipo HashTable, la busqueda se hace directamente sobre el ID.
      */
 	public Tarea servicio1(String ID) {
 		return taskStore.getById(ID);
 	}
     
     /*
-     * Expresar la complejidad temporal del servicio 2.
+     * Expresar la complejidad temporal del servicio 2:
+     * O(n)
      */
 	public List<Tarea> servicio2(boolean esCritica) {
 		return taskStore.getCriticals(esCritica);
 	}
 
     /*
-     * Expresar la complejidad temporal del servicio 3.
+     * Expresar la complejidad temporal del servicio 3: O(n)
+     * Porque arbol no balanceado en el peor de los casos es una LinkedList O(n).
      */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		return taskStore.getPriorityRange(prioridadInferior, prioridadSuperior);
 	}
 
-	public void backtracking(int tiempoMaxEjecucionNoRefrigerados){
-		// El output en el TPE dice <Solucion> pero no se a q se refieren
+	public Solucion backtracking(int tiempoMaxEjecucionNoRefrigerados){
 		BacktrackingTaskProcessor backtrackingTaskProcessor = new BacktrackingTaskProcessor(tiempoMaxEjecucionNoRefrigerados);
-		System.out.println(backtrackingTaskProcessor.backtracking(taskStore.getAll(), procesadoresLinkedList));
-		// Ahi nos deberia imprimir un indexArray de la solucion
-		// Puede ser q lo tomo todo el procesador 0 o q algo no anduvo xD
+		return backtrackingTaskProcessor.backtracking(taskStore.getAll(), procesadoresLinkedList);
 	}
 
-	//Estrategia Greedy, buscar el procesador con menor tiempo maximo de ejecucion
-
+	public Solucion greedy(int tiempoMaxEjecucionNoRefrigerados){
+		GreedyTaskProcessor greedyTaskProcessor = new GreedyTaskProcessor((tiempoMaxEjecucionNoRefrigerados));
+		return greedyTaskProcessor.Greedy(taskStore.getAll(), procesadoresLinkedList);
+	}
 }

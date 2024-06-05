@@ -122,7 +122,7 @@ public class CustomLinkedList<E> implements Iterable<Node<E>> {
         }
     }
 
-    public Node getNodeBy(int index) {
+    public Node<E> getNodeBy(int index) {
         validateIndex(index);
         int pos = 0;
         for (Node<E> current : this) {

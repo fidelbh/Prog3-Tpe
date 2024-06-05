@@ -43,12 +43,12 @@ public class Tarea {
 
     @Override
     public String toString() {
-        return "Tarea{" +
+        return "Tarea{ " +
                 "id='" + id + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", tiempo=" + tiempo +
                 ", prioridad=" + prioridad +
                 ", critica=" + critica +
-                '}';
+                "}";
     }
 }

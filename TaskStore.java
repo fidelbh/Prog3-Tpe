@@ -36,11 +36,10 @@ public class TaskStore {
 
     public List<Tarea> getCriticals(boolean esCritica) {
         List<Tarea> result = new ArrayList<>();
-        Iterator<Node<Tarea>> it = linkedList.iterator();
-        while(it.hasNext()){
-            Tarea t = it.next().getData();
-            if(t.isCritica() == esCritica)
-                result.add(t);
+        for(Node<Tarea> nn: linkedList){
+            Tarea tt = nn.getData();
+            if(tt.isCritica() == esCritica)
+                result.add(tt);
         }
         return result;
     }

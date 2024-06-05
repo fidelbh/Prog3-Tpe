@@ -10,22 +10,41 @@ public class BacktrackingTaskProcessor {
     private int tiempoMaxEjecucionNoRefrigerados, maxAdmittedCriticalTasks, eventsCounter;
     private int bestExecutionTime;
     private ArrayList<Integer> bestSolution;
+    private static final int POS_CRITICALS = 0;
+    private static final int POS_EXECUTION_TIME = 1;
 
     public BacktrackingTaskProcessor(int tiempoMaxEjecucionNoRefrigerados){
         this.tiempoMaxEjecucionNoRefrigerados = tiempoMaxEjecucionNoRefrigerados;
         this.maxAdmittedCriticalTasks = 2;
     }
 
-    public List<Integer> backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
+    /*
+    Explicacion de la estrategia:
+    Para la resolución de la segunda parte del TPE decidimos utilizar una estrategia mediante backtracking con el fin de encontrar
+    la solucion que presente el menor tiempo maximo de ejecucion. Utilizamos findMaxExecutionTime para encontrar el mayor tiempo de ejecucion de todos los procesadores; el metodo
+    isBetterSolution se encarga de verificar si la solucion encontrada es la mejor hasta el momento.
+    */
+
+    /**
+     * Este método aplica la técnica de backtracking para asignar tareas a procesadores de manera óptima.
+     * Evalúa todas las posibles combinaciones de asignación y selecciona la mejor solución basada en el
+     * tiempo de ejecución máximo, contabilizando el número de eventos.
+     *
+     * @param tasks Lista enlazada personalizada que contiene las tareas a ser asignadas.
+     * @param processors Lista enlazada personalizada que contiene los procesadores disponibles.
+     * @return Solucion representando la mejor asignación de tareas a procesadores,
+     *         o null si no se encuentra una solución viable.
+     */
+    public Solucion backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
         ArrayList<Integer> solucion = new ArrayList<>();
         this.eventsCounter = 0;
         this.bestSolution = new ArrayList<>();
         this.bestExecutionTime = Integer.MAX_VALUE;
 
         int[][] processorsTracker = new int[processors.getLength()][2];
-        // [i][j]
-        // pos-j 0 trackea # criticos, pos-j 1 trackea tiempo de ejecucion
-        // pos-i trackea el procesador
+            // [i][j]
+            // pos-j posCrticals trackea # criticos, pos-j posExecutionTime trackea tiempo de ejecucion
+            // pos-i trackea el procesador
         backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
 
         if (bestSolution.isEmpty()){
@@ -34,25 +53,26 @@ public class BacktrackingTaskProcessor {
         }
 
         String solutionString = processSolutionOutput(bestSolution, tasks, processors);
+        Solucion res = new Solucion(solutionString, bestExecutionTime, this.eventsCounter, bestSolution);
 
-        System.out.println(String.format("Solucion obtenida: %s", solutionString));
-        System.out.println(String.format("Tiempo maximo de ejecucion: %s", bestExecutionTime));
-        System.out.println(String.format("Costo de la solucion: %s", this.eventsCounter));
+        System.out.println("---BACKTRACKING---");
+        System.out.println(res);
 
-        return bestSolution; // TODO: return new Solucion {camino, tiempo, eventos}
-    }
-
-    private int findMaxExecutionTime(int[][] processorsTracker) {
-        int res = -1;
-        for (int i = 0; i < processorsTracker.length; i++) {
-            if (processorsTracker[i][1] > res)
-                res = processorsTracker[i][1];
-        }
         return res;
     }
 
-    // Procesador : P1-T2, P2-T4
-
+    /**
+     * Método privado recursivo que implementa el algoritmo de backtracking.
+     * Intenta asignar cada tarea a cada procesador y evalúa la viabilidad de la asignación.
+     *
+     * @param tasks Lista enlazada personalizada que contiene las tareas a ser asignadas.
+     * @param processors Lista enlazada personalizada que contiene los procesadores disponibles.
+     * @param solution Lista que mantiene la asignación actual de tareas a procesadores.
+     * @param currentTask Nodo actual de la tarea en proceso de asignación.
+     * @param firstProcessor Primer nodo del procesador en la lista enlazada.
+     * @param processorsTracker Matriz que rastrea la cantidad de tareas críticas y el tiempo de ejecución por procesador.
+     * @return Lista de enteros representando la asignación de tareas a procesadores en la llamada recursiva actual.
+     */
     private List<Integer> backtracking(CustomLinkedList<Tarea> tasks,
                                        CustomLinkedList<Procesador> processors,
                                        ArrayList<Integer> solution,
@@ -76,10 +96,6 @@ public class BacktrackingTaskProcessor {
 
                 if (validateSolution(processorsTracker, processorPos, taskIsCritical,
                         taskTime, processorIsRefrigerated)) {
-//                    System.out.println(String.format("Valide el procesador %s para la task %s",
-//                            currentProcessor.getData().getId(), currentTask.getData().getId()));
-//                    System.out.println(String.format("Estado: %s", solution));
-
                     this.updateEvent(processorsTracker, processorPos, taskIsCritical, taskTime);
 
                     backtracking(tasks, processors, solution, currentTask.getNext(), firstProcessor, processorsTracker);
@@ -96,6 +112,15 @@ public class BacktrackingTaskProcessor {
         return solution; // first found or empty
     }
 
+    private int findMaxExecutionTime(int[][] processorsTracker) {
+        int res = -1;
+        for (int i = 0; i < processorsTracker.length; i++) {
+            if (processorsTracker[i][POS_EXECUTION_TIME] > res)
+                res = processorsTracker[i][POS_EXECUTION_TIME];
+        }
+        return res;
+    }
+
     private boolean isBetterSolution(int[][] processorsTracker) {
         int currentExecutionTime = findMaxExecutionTime(processorsTracker);
         return currentExecutionTime < this.bestExecutionTime;
@@ -106,27 +131,21 @@ public class BacktrackingTaskProcessor {
                                      boolean taskIsCritical,
                                      int taskTime,
                                      boolean processorIsRefrigerated){
-        int newExecutionTime = processorsTracker[processorPos][1] + taskTime;
-//        System.out.println(String.format("processorTracker: %s %s",
-//                processorsTracker[processorPos][0], processorsTracker[processorPos][1]));
-        if (
-                (!taskIsCritical || processorsTracker[processorPos][0] < this.maxAdmittedCriticalTasks)
-                && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados) ){
-            return true;
-        }
-        return false;
+        int newExecutionTime = processorsTracker[processorPos][POS_EXECUTION_TIME] + taskTime;
+        return (!taskIsCritical || processorsTracker[processorPos][0] < this.maxAdmittedCriticalTasks)
+                && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados);
     }
 
     private void updateEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical,int taskTime){
-        processorsTracker[processorPos][1] += taskTime;
+        processorsTracker[processorPos][POS_EXECUTION_TIME] += taskTime;
         if (taskIsCritical)
-            processorsTracker[processorPos][0]++;
+            processorsTracker[processorPos][POS_CRITICALS]++;
     }
 
     private void undoEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical, int taskTime){
-        processorsTracker[processorPos][1] -= taskTime;
+        processorsTracker[processorPos][POS_EXECUTION_TIME] -= taskTime;
         if (taskIsCritical)
-            processorsTracker[processorPos][0]--;
+            processorsTracker[processorPos][POS_CRITICALS]--;
     }
 
     private String processSolutionOutput(List<Integer> solution,

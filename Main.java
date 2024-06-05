@@ -12,6 +12,7 @@ public class Main {
 		System.out.println(servicios.servicio3(32,92));
 		servicios.backtracking(63);
 
+/*
 		System.out.println("---Procesadores sin refrigerar---");
 		Servicios svc1 = new Servicios("datasets/Procesadores-unrefrigerated.csv",
 				"./datasets/Tareas.csv");
@@ -25,6 +26,9 @@ public class Main {
 		System.out.println("---More tasks---");
 		Servicios svc3 = new Servicios("datasets/Procesadores.csv",
 				"./datasets/Tareas-more.csv");
-		svc3.backtracking(105);
+		svc3.backtracking(63);
+*/
+
+		servicios.greedy(63);
 	}
 }
