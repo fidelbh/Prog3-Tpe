@@ -39,7 +39,7 @@ public class BacktrackingTaskProcessor {
         System.out.println(String.format("Tiempo maximo de ejecucion: %s", bestExecutionTime));
         System.out.println(String.format("Costo de la solucion: %s", this.eventsCounter));
 
-        return bestSolution;
+        return bestSolution; // TODO: return new Solucion {camino, tiempo, eventos}
     }
 
     private int findMaxExecutionTime(int[][] processorsTracker) {
