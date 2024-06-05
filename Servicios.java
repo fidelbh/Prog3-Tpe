@@ -52,4 +52,6 @@ public class Servicios {
 		// Puede ser q lo tomo todo el procesador 0 o q algo no anduvo xD
 	}
 
+	//Estrategia Greedy, buscar el procesador con menor tiempo maximo de ejecucion
+
 }
