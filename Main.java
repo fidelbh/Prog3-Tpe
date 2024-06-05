@@ -21,5 +21,10 @@ public class Main {
 		Servicios svc2 = new Servicios("datasets/Procesadores.csv",
 				"./datasets/Tareas-all_critical.csv");
 		svc2.backtracking(105);
+
+		System.out.println("---More tasks---");
+		Servicios svc3 = new Servicios("datasets/Procesadores.csv",
+				"./datasets/Tareas-more.csv");
+		svc3.backtracking(105);
 	}
 }
