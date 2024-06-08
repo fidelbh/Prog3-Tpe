@@ -46,8 +46,9 @@ public class Servicios {
 	}
 
     /*
-     * Expresar la complejidad temporal del servicio 3: O(n)
-     * Porque al ser un arbol no balanceado, en el peor de los casos es una LinkedList O(n).
+     * Expresar la complejidad temporal del servicio 3:
+     * O(n) ya que utilizamos la estructura de árbol binario, en este caso LinkedListBTree, para ordenar las tareas en relación a su prioridad.
+     * Al ser un arbol no balanceado, en el peor de los casos es una LinkedList O(n) (arbol enredadera).
      */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		return taskStore.getPriorityRange(prioridadInferior, prioridadSuperior);
