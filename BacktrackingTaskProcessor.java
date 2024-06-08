@@ -18,33 +18,38 @@ public class BacktrackingTaskProcessor {
         this.maxAdmittedCriticalTasks = 2;
     }
 
-    /*
-    Explicacion de la estrategia:
-    Para la resolución de la segunda parte del TPE decidimos utilizar una estrategia mediante backtracking con el fin de encontrar
-    la solucion que presente el menor tiempo maximo de ejecucion. Utilizamos findMaxExecutionTime para encontrar el mayor tiempo de ejecucion de todos los procesadores; el metodo
-    isBetterSolution se encarga de verificar si la solucion encontrada es la mejor hasta el momento.
-    */
-
     /**
-     * Este método aplica la técnica de backtracking para asignar tareas a procesadores de manera óptima.
-     * Evalúa todas las posibles combinaciones de asignación y selecciona la mejor solución basada en el
-     * tiempo de ejecución máximo, contabilizando el número de eventos.
+     * Backtracking publico:
+     * - Reinicializa propiedades de clase destinadas a encontrar la mejor solucion: eventsCounter, bestSolution &
+     *      bestExecutionTime
+     * - Genera arreglos auxiliares destinados a dar seguimiento a la solucion actual: solucion & processorsTracker
+     * - Llama recursivamente al backtracking privado, a fin de encontrar la mejor solucion.
+     * - Verifica que el resultado obtenida en bestSolution no este vacia, indicando y devolviendo null si lo es.
+     * - Encapsula el resultado final en la clase Solucion, lo imprime y lo devuelve.
      *
-     * @param tasks Lista enlazada personalizada que contiene las tareas a ser asignadas.
-     * @param processors Lista enlazada personalizada que contiene los procesadores disponibles.
-     * @return Solucion representando la mejor asignación de tareas a procesadores,
-     *         o null si no se encuentra una solución viable.
+     *
+     * @param tasks CustomLinkedList de Tarea que contiene las tareas a ser asignadas.
+     * @param processors CustomLinkedList de Procesador que contiene los procesadores a los cuales asignar tareas.
+     * @return Solucion representando la mejor asignacion de tareas a procesadores, su tiempo maximo de ejecucion,
+     *      el costo aproximado de su calculo y la representacion en String del resultado. De no encontrarse solucion,
+     *      retorna null.
      */
     public Solucion backtracking(CustomLinkedList<Tarea> tasks, CustomLinkedList<Procesador> processors) {
-        ArrayList<Integer> solucion = new ArrayList<>();
         this.eventsCounter = 0;
         this.bestSolution = new ArrayList<>();
         this.bestExecutionTime = Integer.MAX_VALUE;
 
+        ArrayList<Integer> solucion = new ArrayList<>();
         int[][] processorsTracker = new int[processors.getLength()][2];
-            // [i][j]
-            // pos-j posCrticals trackea # criticos, pos-j posExecutionTime trackea tiempo de ejecucion
-            // pos-i trackea el procesador
+        /**
+         * @int[i][j] processorsTracker es un arreglo auxiliar para dar seguimiento a la solucion parcial
+         *      en todo momento.
+         *      - El indice [i][] refleja la posicion del Procesador en processors
+         *      - El indice [][j] distingue:
+         *          -- [][POS_CRITICALS] cuantas tareas criticas lleva asignado el procesador i.
+         *          -- [][POS_EXECUTION_TIME] el tiempo de ejecucion para el procesador i dada la solucion actual.
+         */
+
         backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
 
         if (bestSolution.isEmpty()){
@@ -61,24 +66,34 @@ public class BacktrackingTaskProcessor {
         return res;
     }
 
+
     /**
-     * Método privado recursivo que implementa el algoritmo de backtracking.
-     * Intenta asignar cada tarea a cada procesador y evalúa la viabilidad de la asignación.
+     * Backtracking privado: Recursivamente, intenta asignar cada tarea a cada procesador y evalua la asignacion.
+     * - Analiza si la solucion actual es completa, y si es mejor que la ultima solucion registrada.
+     * - Si lo es, registra la solucion actual como la mejor hasta el momento.
+     * - Caso contrario, mientras la solucion sea incompleta, recorre los procesadores evaluando su validez.
+     *      De ser soluciones validas, las calcula y evalua la siguiente tarea de manera recursiva. Luego deshace el
+     *      calculo y continua evaluando los siguientes posibles procesadores.
      *
-     * @param tasks Lista enlazada personalizada que contiene las tareas a ser asignadas.
-     * @param processors Lista enlazada personalizada que contiene los procesadores disponibles.
-     * @param solution Lista que mantiene la asignación actual de tareas a procesadores.
-     * @param currentTask Nodo actual de la tarea en proceso de asignación.
-     * @param firstProcessor Primer nodo del procesador en la lista enlazada.
-     * @param processorsTracker Matriz que rastrea la cantidad de tareas críticas y el tiempo de ejecución por procesador.
-     * @return Lista de enteros representando la asignación de tareas a procesadores en la llamada recursiva actual.
+     * @param tasks CustomLinkedList de Tarea que contiene las tareas a ser asignadas.
+     * @param processors CustomLinkedList de Procesador que contiene los procesadores a los cuales asignar tareas.
+     * @param solution arreglo auxiliar para el seguimiento de la solucion actual.
+     * @param currentTask Nodo de la tarea en analisis.
+     * @param firstProcessor Nodo del primer procesador en la lista de procesadores.
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *                          tiempo de ejecucion de cada procesador para la solucion actual.
      */
-    private List<Integer> backtracking(CustomLinkedList<Tarea> tasks,
+    private void backtracking(CustomLinkedList<Tarea> tasks,
                                        CustomLinkedList<Procesador> processors,
                                        ArrayList<Integer> solution,
                                        Node<Tarea> currentTask,
                                        Node<Procesador> firstProcessor,
                                        int[][] processorsTracker){
+        /**
+         * Posible refactor:
+         * - Reemplazar tasks por int tasksLength
+         * - Quitar processors y usar processorsTracker.length en lugar de processors.getLength()
+         */
         if (solution.size() == tasks.getLength() && isBetterSolution(processorsTracker)){
             this.bestExecutionTime = findMaxExecutionTime(processorsTracker);
             this.bestSolution = new ArrayList<>(solution);
@@ -87,7 +102,7 @@ public class BacktrackingTaskProcessor {
             Node<Procesador> currentProcessor = firstProcessor;
             while(solution.size() < tasks.getLength() && processorPos < processors.getLength()){
 
-                solution.add(processorPos); // asignamos el procesador 0 al index de la tarea[pos]
+                solution.add(processorPos); // asignamos el procesador processorPos al index de la tarea[pos]
                 this.eventsCounter++;
 
                 boolean taskIsCritical = currentTask.getData().isCritica();
@@ -109,9 +124,17 @@ public class BacktrackingTaskProcessor {
                 currentProcessor = currentProcessor.getNext();
             }
         }
-        return solution; // first found or empty
+        return;
     }
 
+    /**
+     * Busca la posicion del procesador con el tiempo de ejecucion mas alto. Si encuentra mas de uno,
+     * devuelve el primero.
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @return la posicion del procesador con el tiempo de ejecucion mas alto. Si encuentra mas de uno,
+     *      devuelve el primero.
+     */
     private int findMaxExecutionTime(int[][] processorsTracker) {
         int res = -1;
         for (int i = 0; i < processorsTracker.length; i++) {
@@ -121,11 +144,30 @@ public class BacktrackingTaskProcessor {
         return res;
     }
 
+    /**
+     * Analiza si el tiempo de ejecucion de la solucion actual es menor al menor tiempo encontrado hasta el momento.
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @return si el tiempo de ejecucion de la solucion actual es menor al menor tiempo encontrado hasta el momento.
+     */
     private boolean isBetterSolution(int[][] processorsTracker) {
         int currentExecutionTime = findMaxExecutionTime(processorsTracker);
         return currentExecutionTime < this.bestExecutionTime;
     }
 
+    /**
+     *
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @param processorPos posicion del procesador en analisis.
+     * @param taskIsCritical indica si la tarea en consideracion es o no critica.
+     * @param taskTime tiempo de ejecucion de la tarea en consideracion.
+     * @param processorIsRefrigerated si el procesador en analisis es o no refrigerado.
+     * @return evalua si la tarea es critica, y si asi lo fuera comprueba que el procesador tiene espacio para
+     *      una nueva tarea critica. A su vez evalua si el procesador es refrigerado, y si asi lo fuera,
+     *      que el incipiente tiempo de ejecucion no supere el tiempo maximo de ejecucion para procesadores
+     *      no refrigerados.
+     */
     private boolean validateSolution(int[][] processorsTracker,
                                      Integer processorPos,
                                      boolean taskIsCritical,
@@ -136,18 +178,45 @@ public class BacktrackingTaskProcessor {
                 && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados);
     }
 
+    /**
+     * Actualiza el processorsTracker para el procesador en processorPos agregando el tiempo de ejecucion
+     * de la tarea actual, e incrementando el contador de criticos si la tarea es critica.
+     *
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @param processorPos posicion del procesador en analisis.
+     * @param taskIsCritical indica si la tarea en consideracion es o no critica.
+     * @param taskTime tiempo de ejecucion de la tarea en consideracion.
+     */
     private void updateEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical,int taskTime){
         processorsTracker[processorPos][POS_EXECUTION_TIME] += taskTime;
         if (taskIsCritical)
             processorsTracker[processorPos][POS_CRITICALS]++;
     }
 
+    /**
+     * Actualiza el processorsTracker para el procesador en processorPos restando el tiempo de ejecucion
+     * de la tarea actual, y disminuyendo el contador de criticos si la tarea es critica.
+     *
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @param processorPos posicion del procesador en analisis.
+     * @param taskIsCritical indica si la tarea en consideracion es o no critica.
+     * @param taskTime tiempo de ejecucion de la tarea en consideracion.
+     */
     private void undoEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical, int taskTime){
         processorsTracker[processorPos][POS_EXECUTION_TIME] -= taskTime;
         if (taskIsCritical)
             processorsTracker[processorPos][POS_CRITICALS]--;
     }
 
+    /**
+     *
+     * @param solution arreglo de indices que contiene que procesador fue asignado a cada tarea.
+     * @param tasks CustomLinkedList de Tarea que contiene las tareas a ser asignadas.
+     * @param processors CustomLinkedList de Procesador que contiene los procesadores a los cuales asignar tareas.
+     * @return String de la solucion: Pn: Tn-Tn |...
+     */
     private String processSolutionOutput(List<Integer> solution,
                                        CustomLinkedList<Tarea> tasks,
                                        CustomLinkedList<Procesador> processors){
