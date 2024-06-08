@@ -16,29 +16,29 @@ public class TaskStore {
     private Hashtable<String, Tarea> idHash;
 
 
-    public TaskStore(){
+    public TaskStore() {
         linkedList = new CustomLinkedList<>();
         priorityBTree = new LinkedListBTree<>();
         idHash = new Hashtable<>();
     }
 
-    public void addTask(String id, String nombre, Integer tiempo, Integer prioridad, Boolean critica){
+    public void addTask(String id, String nombre, Integer tiempo, Integer prioridad, Boolean critica) {
         Tarea tarea = new Tarea(id, nombre, tiempo, prioridad, critica);
         linkedList.push(tarea);
         priorityBTree.put(tarea.getPrioridad(), tarea);
         idHash.put(tarea.getId(), tarea);
     }
 
-    public Tarea getById(String id){
+    public Tarea getById(String id) {
         Tarea tarea = idHash.get(id);
         return new Tarea(tarea);
     }
 
     public List<Tarea> getCriticals(boolean esCritica) {
         List<Tarea> result = new ArrayList<>();
-        for(Node<Tarea> nn: linkedList){
+        for (Node<Tarea> nn : linkedList) {
             Tarea tt = nn.getData();
-            if(tt.isCritica() == esCritica)
+            if (tt.isCritica() == esCritica)
                 result.add(tt);
         }
         return result;
@@ -49,7 +49,7 @@ public class TaskStore {
         return priorityBTree.getRange(Integer.valueOf(from), Integer.valueOf(to));
     }
 
-    public CustomLinkedList<Tarea> getAll(){
+    public CustomLinkedList<Tarea> getAll() {
         return linkedList; // TODO: devolver una copia
     }
 }

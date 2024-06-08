@@ -8,7 +8,7 @@ public class Solucion {
     private final int costo;
     private final ArrayList<Integer> indexProcesadores;
 
-    public Solucion(String solucion, int tiempoMaxEjecucion, int costo, ArrayList<Integer> indexProcesadores){
+    public Solucion(String solucion, int tiempoMaxEjecucion, int costo, ArrayList<Integer> indexProcesadores) {
         this.solucion = solucion;
         this.tiempoMaxEjecucion = tiempoMaxEjecucion;
         this.costo = costo;
@@ -16,7 +16,7 @@ public class Solucion {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("Solucion obtenida: %s\n" +
                         "Tiempo maximo de ejecucion: %s\n" +
                         "Costo de la solucion: %s\n" +

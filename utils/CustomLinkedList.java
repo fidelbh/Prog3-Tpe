@@ -9,16 +9,18 @@ public class CustomLinkedList<E> implements Iterable<Node<E>> {
     private int length;
     private Comparator<E> comparator;
 
-    public CustomLinkedList(){
+    public CustomLinkedList() {
         this.comparator = null;
         length = 0;
     }
-    public CustomLinkedList(CustomLinkedList<E> customLinkedList){
-        for (Node<E> node : customLinkedList){
+
+    public CustomLinkedList(CustomLinkedList<E> customLinkedList) {
+        for (Node<E> node : customLinkedList) {
             E data = node.getData();
             this.push(data);
         }
     }
+
     public CustomLinkedList(Comparator<E> comparator) {
         this.comparator = comparator;
         length = 0;
@@ -183,7 +185,7 @@ public class CustomLinkedList<E> implements Iterable<Node<E>> {
             prev.setNext(next); // A -> C
         if (next != null)
             next.setPrev(prev); // A <- C
-        if(targetNode.equals(getFirst()))
+        if (targetNode.equals(getFirst()))
             setFirst(next);
         if (targetNode.equals(getLast()))
             setLast(prev);
@@ -223,7 +225,7 @@ public class CustomLinkedList<E> implements Iterable<Node<E>> {
 
     public List<E> getAll() {
         List<E> result = new ArrayList<>();
-        for (Node<E> node : this){
+        for (Node<E> node : this) {
             result.add(node.getData());
         }
         return result;
