@@ -25,26 +25,32 @@ public class LinkedListTreeNode<E> {
         this.push(data);
     }
 
-    public LinkedListTreeNode<E> getLeft() { return left; }
+    public LinkedListTreeNode<E> getLeft() {
+        return left;
+    }
 
-    public void setLeft(LinkedListTreeNode<E> left) { this.left = left; }
+    public void setLeft(LinkedListTreeNode<E> left) {
+        this.left = left;
+    }
 
     public LinkedListTreeNode<E> getRight() {
         return right;
     }
 
-    public void setRight(LinkedListTreeNode<E> right) { this.right = right; }
+    public void setRight(LinkedListTreeNode<E> right) {
+        this.right = right;
+    }
 
-    public void push(E data){
+    public void push(E data) {
         linkedList.push(data);
     }
 
-    public void setKey(Integer key){
+    public void setKey(Integer key) {
         this.key = Objects.requireNonNull(key);
     }
 
-    public Integer getKey(){
-        return  key;
+    public Integer getKey() {
+        return key;
     }
 
     public List<E> getAll() {

@@ -18,13 +18,17 @@ public class Node<E> {
         return next;
     }
 
-    public void setNext(Node<E> next) { this.next = next; }
+    public void setNext(Node<E> next) {
+        this.next = next;
+    }
 
     public Node<E> getPrev() {
         return prev;
     }
 
-    public void setPrev(Node<E> prev) { this.prev = prev; }
+    public void setPrev(Node<E> prev) {
+        this.prev = prev;
+    }
 
     public E getData() {
         return data;
@@ -34,11 +38,11 @@ public class Node<E> {
         this.data = Objects.requireNonNull(data);
     }
 
-    public void deleteAt(int index){
-        if (index == 0){
+    public void deleteAt(int index) {
+        if (index == 0) {
             getPrev().setNext(getNext());
-        }else{
-            deleteAt(index -1);
+        } else {
+            deleteAt(index - 1);
         }
     }
 
