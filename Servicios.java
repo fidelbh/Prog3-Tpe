@@ -13,9 +13,11 @@ import java.util.List;
 public class Servicios {
 	private TaskStore taskStore;
 	private CustomLinkedList<Procesador> procesadoresLinkedList;
+
 	/*
      * Expresar la complejidad temporal del constructor.
-     * O(2n) 2 for, while en ReadContent
+     * O(4n) teniendo 2 iteradores secuenciales para el readProcessors
+     * y otros 2 para el readTasks.
      */
 	public Servicios(String pathProcesadores, String pathTareas)
 	{
@@ -26,15 +28,18 @@ public class Servicios {
 	
 	/*
      * Expresar la complejidad temporal del servicio 1:
-     * La complejidad temporal del servicio 1 es O(1), ya que al usar una estructura de tipo HashTable, la busqueda se hace directamente sobre el ID.
+     * La complejidad temporal del servicio 1 es O(1), ya que al usar
+     * una estructura de tipo HashTable, la busqueda se hace en base al calculo del resto de una division
+     * sobre el hashCode del ID proporcionado.
      */
 	public Tarea servicio1(String ID) {
 		return taskStore.getById(ID);
 	}
-    
+
     /*
      * Expresar la complejidad temporal del servicio 2:
-     * O(n)
+     * O(n) porque itera sobre la lista original, agregando la tarea o no al resultado en funcion
+     * de si el usuario solicita las tareas criticas o las no criticas.
      */
 	public List<Tarea> servicio2(boolean esCritica) {
 		return taskStore.getCriticals(esCritica);
@@ -42,7 +47,7 @@ public class Servicios {
 
     /*
      * Expresar la complejidad temporal del servicio 3: O(n)
-     * Porque arbol no balanceado en el peor de los casos es una LinkedList O(n).
+     * Porque al ser un arbol no balanceado, en el peor de los casos es una LinkedList O(n).
      */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		return taskStore.getPriorityRange(prioridadInferior, prioridadSuperior);

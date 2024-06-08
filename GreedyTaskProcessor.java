@@ -17,12 +17,11 @@ public class GreedyTaskProcessor {
     }
 
     /*
-     Explicación de la estrategia:
-     Para la resolución de la segunda parte del TPE decidimos utilizar una estrategia Greedy, con el fin de
-      buscar el procesador con menor tiempo maximo de ejecucion, y asignarle una tarea, logrando obtener el menor tiempo maximo de ejecucion
-      en cada procesador. El metodo findQuickestProcessor es el encargado de esta tarea,
-      que a su vez, verifica que no se encuentre en processorsToSkip, estructura que guarda aquellos procesadores no aptos para
-      asignarles tareas.
+       Explicación de la estrategia:
+       Para la resolución de la segunda parte del TPE decidimos utilizar una estrategia Greedy, en base a la estrategia
+       de asignar cada nueva tarea al procesador que hasta el momento acumule el menor tiempo de ejecucion.
+       El metodo findQuickestProcessor es el encargado de esta tarea, que a su vez, verifica que no se encuentre en
+       processorsToSkip, estructura que guarda aquellos procesadores no aptos para asignarles tareas.
     */
     public Solucion Greedy(CustomLinkedList<Tarea> tasks,
                                 CustomLinkedList<Procesador> processors){
@@ -37,7 +36,7 @@ public class GreedyTaskProcessor {
             boolean crit = t.getData().isCritica();
             int taskT = t.getData().getTiempo();
             boolean foundProcessor = false;
-            while(!foundProcessor){
+            while(!foundProcessor && processorsTracker.length != processorsToSkip.size()){
                 posP = findQuickestProcessor(processorsTracker, processorsToSkip);
                 boolean isRefrigerated = processors.getNodeBy(posP).getData().isRefrigerado();
 
@@ -50,20 +49,29 @@ public class GreedyTaskProcessor {
             }
         }
 
-        String solutionString = processSolutionOutput(solucion, tasks, processors);
-        int maxExecutionTime = findMaxExecutionTime(processorsTracker);
-
         System.out.println("---GREEDY---");
         if (solucion.isEmpty()){
             System.out.println("No solution could be found");
             return null;
         }
 
+        String solutionString = processSolutionOutput(solucion, tasks, processors);
+        int maxExecutionTime = findMaxExecutionTime(processorsTracker);
+
         Solucion res = new Solucion(solutionString, maxExecutionTime, this.eventsCounter, solucion);
         System.out.println(res);
         return res;
     }
 
+    /**
+     * Busca la posicion del procesador con menor tiempo de ejecucion hasta el momento, sin cosiderar validos
+     * aquellos presentes en el arreglo processorsToSkip.
+     *
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @param processorsToSkip arreglo de procesadores a no considerar.
+     * @return la posicion del procesador con menor tiempo de ejecucion, o -1 si ninguno cumple las condiciones.
+     */
     private int findQuickestProcessor(int[][] processorsTracker,
                                       ArrayList<Integer> processorsToSkip) {
         int res = -1;
