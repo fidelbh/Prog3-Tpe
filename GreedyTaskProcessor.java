@@ -78,6 +78,19 @@ public class GreedyTaskProcessor {
         return res;
     }
 
+    /**
+     *
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @param processorPos posicion del procesador en analisis.
+     * @param taskIsCritical indica si la tarea en consideracion es o no critica.
+     * @param taskTime tiempo de ejecucion de la tarea en consideracion.
+     * @param processorIsRefrigerated si el procesador en analisis es o no refrigerado.
+     * @return evalua si la tarea es critica, y si asi lo fuera comprueba que el procesador tiene espacio para
+     *      una nueva tarea critica. A su vez evalua si el procesador es refrigerado, y si asi lo fuera,
+     *      que el incipiente tiempo de ejecucion no supere el tiempo maximo de ejecucion para procesadores
+     *      no refrigerados.
+     */
     private boolean validateSolution(int[][] processorsTracker,
                                      Integer processorPos,
                                      boolean taskIsCritical,
@@ -88,12 +101,30 @@ public class GreedyTaskProcessor {
                 && (processorIsRefrigerated || newExecutionTime <= this.tiempoMaxEjecucionNoRefrigerados);
     }
 
+    /**
+     * Actualiza el processorsTracker para el procesador en processorPos agregando el tiempo de ejecucion
+     * de la tarea actual, e incrementando el contador de criticos si la tarea es critica.
+     *
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @param processorPos posicion del procesador en analisis.
+     * @param taskIsCritical indica si la tarea en consideracion es o no critica.
+     * @param taskTime tiempo de ejecucion de la tarea en consideracion.
+     */
     private void updateEvent(int[][] processorsTracker, Integer processorPos, boolean taskIsCritical,int taskTime){
         processorsTracker[processorPos][POS_EXECUTION_TIME] += taskTime;
         if (taskIsCritical)
             processorsTracker[processorPos][POS_CRITICALS]++;
     }
 
+    /**
+     * Busca la posicion del procesador con el tiempo de ejecucion mas alto. Si encuentra mas de uno,
+     * devuelve el primero.
+     * @param processorsTracker arreglo auxiliar para el seguimiento de la cantidad de tareas criticas y
+     *      tiempo de ejecucion de cada procesador para la solucion actual.
+     * @return la posicion del procesador con el tiempo de ejecucion mas alto. Si encuentra mas de uno,
+     *      devuelve el primero.
+     */
     private int findMaxExecutionTime(int[][] processorsTracker) {
         int res = -1;
         for (int i = 0; i < processorsTracker.length; i++) {
@@ -103,6 +134,13 @@ public class GreedyTaskProcessor {
         return res;
     }
 
+    /**
+     *
+     * @param solution arreglo de indices que contiene que procesador fue asignado a cada tarea.
+     * @param tasks CustomLinkedList de Tarea que contiene las tareas a ser asignadas.
+     * @param processors CustomLinkedList de Procesador que contiene los procesadores a los cuales asignar tareas.
+     * @return String de la solucion: Pn: Tn-Tn |...
+     */
     private String processSolutionOutput(List<Integer> solution,
                                          CustomLinkedList<Tarea> tasks,
                                          CustomLinkedList<Procesador> processors){
