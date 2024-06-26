@@ -36,6 +36,10 @@ public class Main {
         svc3.backtracking(63);
         svc3.greedy(63);
 
+        // "Se rompe greedy con este caso de test: tiempo maximo para no refrigerados: 80
+        Servicios svc4 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas01.csv");
+        svc4.backtracking(80);
+        svc4.greedy(80);
 
     }
 }
