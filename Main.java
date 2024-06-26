@@ -10,14 +10,14 @@ public class Main {
 
         System.out.println("---Servicio 1---");
         System.out.println(servicios.servicio1("T2"));
+        System.out.println(servicios.servicio1("T200"));
         System.out.println("---Servicio 2---");
         System.out.println(servicios.servicio2(true));
         System.out.println("---Servicio 3---");
         System.out.println(servicios.servicio3(32, 92));
         servicios.backtracking(63);
         servicios.greedy(63);
-
-
+        
         System.out.println("---Procesadores sin refrigerar---");
         Servicios svc1 = new Servicios("datasets/Procesadores-unrefrigerated.csv",
                 "./datasets/Tareas.csv");
@@ -36,10 +36,10 @@ public class Main {
         svc3.backtracking(63);
         svc3.greedy(63);
 
+        System.out.println("---Caso de correccion---");
         // "Se rompe greedy con este caso de test: tiempo maximo para no refrigerados: 80
         Servicios svc4 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas01.csv");
         svc4.backtracking(80);
         svc4.greedy(80);
-
     }
 }
