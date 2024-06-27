@@ -36,13 +36,9 @@ public class Servicios {
     }
 
     /*
-     * Expresar la complejidad temporal del servicio 2: TODO: Actualizar la eficiencia
-     * O(n) porque itera sobre la lista original, agregando la tarea o no al resultado en funcion
-     * de si el usuario solicita las tareas criticas o las no criticas.
-     *
-     * Una posible optimizacion en cuanto a la complejidad temporal resultaria de mantener 2 listas con referencias
-     * a las tareas, donde una contenga tareas criticas y la otra, tareas no criticas. De esta forma se devuelve una
-     * u otra lista, reduciendo la complejidad temporal del servicio a O(1).
+     * Expresar la complejidad temporal del servicio 2:
+     * O(1) porque devuelve una de dos listas precargadas con las tareas criticas o no criticas,
+     * segun el valor del parametro esCritica.
      */
     public List<Tarea> servicio2(boolean esCritica) {
         return taskStore.getCriticals(esCritica);

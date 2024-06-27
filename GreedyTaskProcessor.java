@@ -50,7 +50,7 @@ public class GreedyTaskProcessor {
         }
 
         System.out.println("---GREEDY---");
-        if (solucion.isEmpty() || solucion.size() < tasks.getLength()) {
+        if (solucion.size() < tasks.getLength()) {
             System.out.println("No solution could be found");
             return null;
         }

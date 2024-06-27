@@ -51,6 +51,7 @@ public class BacktrackingTaskProcessor {
 
         backtracking(tasks, processors, solucion, tasks.getFirst(), processors.getFirst(), processorsTracker);
 
+        System.out.println("---BACKTRACKING---");
         if (bestSolution.isEmpty()) {
             System.out.println("No solution could be found");
             return null;
@@ -59,7 +60,6 @@ public class BacktrackingTaskProcessor {
         String solutionString = processSolutionOutput(bestSolution, tasks, processors);
         Solucion res = new Solucion(solutionString, bestExecutionTime, this.eventsCounter, bestSolution);
 
-        System.out.println("---BACKTRACKING---");
         System.out.println(res);
 
         return res;
