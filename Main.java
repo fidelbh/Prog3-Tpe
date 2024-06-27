@@ -17,7 +17,7 @@ public class Main {
         System.out.println(servicios.servicio3(32, 92));
         servicios.backtracking(63);
         servicios.greedy(63);
-        
+
         System.out.println("---Procesadores sin refrigerar---");
         Servicios svc1 = new Servicios("datasets/Procesadores-unrefrigerated.csv",
                 "./datasets/Tareas.csv");
@@ -36,10 +36,22 @@ public class Main {
         svc3.backtracking(63);
         svc3.greedy(63);
 
-        System.out.println("---Caso de correccion---");
-        // "Se rompe greedy con este caso de test: tiempo maximo para no refrigerados: 80
+        System.out.println("---Casos de correccion---");
         Servicios svc4 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas01.csv");
-        svc4.backtracking(80);
-        svc4.greedy(80);
+        svc4.backtracking(200);
+        svc4.greedy(200);
+        Servicios svc5 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas01.csv");
+        svc5.backtracking(10);
+        svc5.greedy(10);
+        Servicios svc6 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas02.csv");
+        svc6.backtracking(200);
+        svc6.greedy(200);
+        Servicios svc7 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas02.csv");
+        svc7.backtracking(100);
+        svc7.greedy(100);
+        // "Se rompe greedy con este caso de test: tiempo maximo para no refrigerados: 80
+        Servicios svc8 = new Servicios("datasets/Procesadores01.csv", "datasets/Tareas02.csv");
+        svc8.backtracking(80);
+        svc8.greedy(80);
     }
 }
